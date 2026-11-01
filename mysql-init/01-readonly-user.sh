@@ -4,7 +4,7 @@
 if [ -n "${DB_READONLY_USER:-}" ] && [ -n "${DB_READONLY_PASSWORD:-}" ]; then
   echo "Creating read-only user '${DB_READONLY_USER}' with SELECT on '${MYSQL_DATABASE}'"
   MYSQL_PWD="${MYSQL_ROOT_PASSWORD}" mysql --protocol=socket -uroot <<SQL
-CREATE USER IF NOT EXISTS '${DB_READONLY_USER}'@'%' IDENTIFIED BY '${DB_READONLY_PASSWORD}';
+CREATE USER IF NOT EXISTS '${DB_READONLY_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '${DB_READONLY_PASSWORD}';
 GRANT SELECT ON \`${MYSQL_DATABASE}\`.* TO '${DB_READONLY_USER}'@'%';
 SQL
 fi

@@ -12,7 +12,9 @@ services:
     image: mysql:8.4
     container_name: libraryhub-db
     restart: unless-stopped
-    command: ["--performance-schema=OFF"]
+    # mysql_native_password is loaded only for the read-only "evaluator" account (see mysql-init/),
+    # so that any MySQL client library can log in; all other accounts use caching_sha2_password.
+    command: ["--performance-schema=OFF", "--mysql-native-password=ON"]
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is not set, see .env.example}
       MYSQL_ROOT_HOST: localhost

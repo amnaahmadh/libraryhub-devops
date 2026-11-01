@@ -12,7 +12,7 @@ services:
     image: mysql:8.4
     container_name: libraryhub-ci-db
     restart: unless-stopped
-    command: ["--performance-schema=OFF"]
+    command: ["--performance-schema=OFF", "--mysql-native-password=ON"]
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is not set, see .env.example}
       MYSQL_ROOT_HOST: localhost
