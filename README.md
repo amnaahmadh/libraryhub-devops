@@ -9,7 +9,7 @@ the application code and everything needed to run it in containers on one EC2 in
 | Path | Purpose |
 |---|---|
 | `app/` | Application source code |
-| `Dockerfile`, `.dockerignore` | **Part I.** Builds the web server image `your-dockerhub-username/libraryhub:1.0` |
+| `Dockerfile`, `.dockerignore` | **Part I.** Builds the web server image `amminah/libraryhub:1.0` |
 | `docker-compose.yml` | **Part I.** Runs the image from Docker Hub with MySQL and a persistent volume |
 | `docker-compose.jenkins.yml` | **Part II.** Same stack, code attached as a volume, different names and ports |
 | `Jenkinsfile` | **Part II.** Pipeline: Checkout, Build in Docker, Deploy, Smoke test, e-mail |
@@ -36,8 +36,8 @@ Application accounts: `admin@library.com` / `Admin@123` and `member@library.com`
 ## Part I: build, push and run
 
 ```bash
-docker build -t your-dockerhub-username/libraryhub:1.0 .
-docker push your-dockerhub-username/libraryhub:1.0
+docker build -t amminah/libraryhub:1.0 .
+docker push amminah/libraryhub:1.0
 
 # on the EC2 instance
 bash scripts/ec2-setup.sh

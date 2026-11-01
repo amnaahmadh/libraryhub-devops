@@ -39,7 +39,7 @@ services:
       start_interval: 2s
 
   web:
-    image: your-dockerhub-username/libraryhub:1.0
+    image: amminah/libraryhub:1.0
     container_name: libraryhub-web
     restart: unless-stopped
     depends_on:
