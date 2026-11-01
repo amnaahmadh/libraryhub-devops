@@ -52,7 +52,7 @@ pipeline {
                         dir('app') {
                             sh 'node --version && npm --version'
                             sh 'npm ci --omit=dev --no-audit --no-fund'
-                            sh 'for f in $(find . -name "*.js" -not -path "./node_modules/*"); do node --check "$f"; done'
+                            sh 'find . -name "*.js" -not -path "./node_modules/*" | xargs -n 1 node --check'
                         }
                     }
                 }
