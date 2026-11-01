@@ -41,8 +41,11 @@ docker push your-dockerhub-username/libraryhub:1.0
 
 # on the EC2 instance
 bash scripts/ec2-setup.sh
-bash scripts/deploy-part1.sh        # = docker compose up -d with a generated .env
+DB_READONLY_PASSWORD=<password> bash scripts/deploy-part1.sh    # writes .env, then docker compose up -d
 ```
+
+Database integration can be checked with the read-only account `evaluator` (SELECT on `library_db`
+only), e.g. `mysql -h <EC2-IP> -P 3307 -u evaluator -p library_db`.
 
 ## Part II: CI/CD
 

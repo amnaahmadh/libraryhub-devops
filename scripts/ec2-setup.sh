@@ -41,9 +41,9 @@ sudo usermod -aG docker "$USER"
 sudo docker --version
 sudo docker compose version
 
-log "3/6 Java 21 and Jenkins LTS"
+log "3/6 Java and Jenkins LTS"
 if [ ! -f /usr/share/java/jenkins.war ]; then
-  sudo apt-get install -y fontconfig openjdk-21-jre-headless
+  sudo apt-get install -y fontconfig openjdk-21-jre-headless || sudo apt-get install -y fontconfig openjdk-25-jre-headless
   sudo curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key -o /etc/apt/keyrings/jenkins-keyring.asc
   echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" \
     | sudo tee /etc/apt/sources.list.d/jenkins.list >/dev/null
