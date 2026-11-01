@@ -102,9 +102,7 @@ pipeline {
                     recipientProviders: [developers(), requestor()],
                     subject: "LibraryHub CI #${env.BUILD_NUMBER}: ${currentBuild.currentResult} (${env.GIT_COMMIT_SHORT ?: 'no commit'})",
                     mimeType: 'text/html',
-                    body: emailBody(),
-                    attachLog: true,
-                    compressLog: true
+                    body: emailBody()
                 )
             }
         }
@@ -185,8 +183,10 @@ def emailBody() {
 <table cellpadding="6" style="border-collapse:collapse">
 ${rows}
 <tr><td><b>Application</b></td><td>${app}</td></tr>
-<tr><td><b>Console output</b></td><td><a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a> (log attached)</td></tr>
+<tr><td><b>Console output</b></td><td><a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></td></tr>
 </table>
 <p>Pipeline: Checkout &rarr; Build in Docker &rarr; Deploy with Docker Compose &rarr; Smoke test</p>
+<p><b>Last lines of the build log</b></p>
+<pre style="background:#f5f7fb;border:1px solid #dfe4ee;padding:8px;font-size:12px">\${BUILD_LOG, maxLines=40, escapeHtml=true}</pre>
 </body></html>"""
 }
