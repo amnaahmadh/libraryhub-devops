@@ -115,7 +115,7 @@ pipeline {
 @NonCPS
 def collaborators() {
     return [
-        'amnaahmadh' : 'your-email@gmail.com',
+        'amnaahmadh' : 'amnaaahmadh@gmail.com',
         'malik-qasim': 'qasimalik@gmail.com',
     ]
 }
