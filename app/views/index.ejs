@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div>
+    <h1>Your campus library, in the cloud.</h1>
+    <p class="lead">Search the catalogue, borrow books, track due dates and fines &mdash; all from one place.</p>
+    <form action="/books" method="get" class="search-bar">
+      <input type="search" name="q" placeholder="Search by title, author or ISBN" aria-label="Search books">
+      <button class="btn">Search</button>
+    </form>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <div class="stat"><span class="stat-value"><%= stats.books %></span><span class="stat-label">Titles</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.available %></span><span class="stat-label">Copies available</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.categories %></span><span class="stat-label">Categories</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.members %></span><span class="stat-label">Members</span></div>
+</section>
+
+<h2>Recently added</h2>
+<div class="card-grid">
+  <% recent.forEach(function (b) { %>
+    <a class="card book-card" href="/books/<%= b.id %>">
+      <span class="tag"><%= b.category || 'Uncategorised' %></span>
+      <h3><%= b.title %></h3>
+      <p class="muted"><%= b.author %></p>
+      <span class="availability <%= b.available_copies > 0 ? 'ok' : 'none' %>">
+        <%= b.available_copies > 0 ? b.available_copies + ' available' : 'All copies on loan' %>
+      </span>
+    </a>
+  <% }) %>
+</div>
+
+<%- include('partials/footer') %>

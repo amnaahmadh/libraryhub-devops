@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/admin-nav') %>
+
+<div class="two-col">
+  <div class="card">
+    <h2>Categories</h2>
+    <table class="table">
+      <thead><tr><th>Name</th><th>Description</th><th>Books</th><th></th></tr></thead>
+      <tbody>
+        <% categories.forEach(function (c) { %>
+          <tr>
+            <td><a href="/books?category=<%= c.id %>"><%= c.name %></a></td>
+            <td class="muted"><%= c.description || '-' %></td>
+            <td><%= c.book_count %></td>
+            <td>
+              <form method="post" action="/categories/<%= c.id %>/delete" class="confirm-delete">
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>Add category</h2>
+    <form method="post" action="/categories" class="form">
+      <label>Name <input type="text" name="name" maxlength="80" required></label>
+      <label>Description <input type="text" name="description" maxlength="255"></label>
+      <button class="btn">Create category</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

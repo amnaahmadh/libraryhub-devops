@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<% const active = loans.filter(function (l) { return l.status === 'issued'; }); %>
+<div class="page-head">
+  <h1>My Loans</h1>
+  <span class="muted"><%= active.length %> of <%= maxLoans %> loan slots used &middot; Fine: Rs. <%= finePerDay %>/day late</span>
+</div>
+
+<% if (!loans.length) { %>
+  <div class="empty-state"><p>You have not borrowed any books yet.</p><a class="btn" href="/books">Browse the catalogue</a></div>
+<% } else { %>
+  <div class="card">
+    <table class="table">
+      <thead><tr><th>Book</th><th>Issued</th><th>Due</th><th>Status</th><th>Fine</th><th></th></tr></thead>
+      <tbody>
+        <% loans.forEach(function (l) { %>
+          <tr class="<%= l.overdue ? 'row-danger' : '' %>">
+            <td><a href="/books/<%= l.book_id %>"><%= l.title %></a><br><span class="muted small"><%= l.author %></span></td>
+            <td><%= fmtDate(l.issued_at) %></td>
+            <td><%= fmtDate(l.due_date) %></td>
+            <td>
+              <% if (l.status === 'returned') { %><span class="badge">Returned <%= fmtDate(l.returned_at) %></span>
+              <% } else if (l.overdue) { %><span class="badge badge-danger">Overdue</span>
+              <% } else { %><span class="badge badge-ok">On loan</span><% } %>
+            </td>
+            <td>Rs. <%= Number(l.status === 'returned' ? l.fine_amount : l.accrued_fine).toFixed(0) %></td>
+            <td>
+              <% if (l.status === 'issued') { %>
+                <form method="post" action="/loans/<%= l.id %>/return"><button class="btn btn-sm">Return</button></form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> | LibraryHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a href="/" class="brand"><span class="brand-mark">L</span>LibraryHub</a>
+    <nav class="nav">
+      <a href="/books" class="<%= currentPath.startsWith('/books') ? 'active' : '' %>">Catalogue</a>
+      <% if (currentUser) { %>
+        <a href="/loans/my" class="<%= currentPath === '/loans/my' ? 'active' : '' %>">My Loans</a>
+        <% if (currentUser.role === 'admin') { %>
+          <a href="/admin" class="<%= currentPath.startsWith('/admin') || currentPath.startsWith('/categories') ? 'active' : '' %>">Admin</a>
+        <% } %>
+        <a href="/profile" class="<%= currentPath === '/profile' ? 'active' : '' %>"><%= currentUser.name %></a>
+        <form method="post" action="/logout" class="inline"><button class="link-btn">Logout</button></form>
+      <% } else { %>
+        <a href="/login" class="<%= currentPath === '/login' ? 'active' : '' %>">Login</a>
+        <a href="/register" class="btn btn-sm">Register</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  <% flash.forEach(function (f) { %>
+    <div class="alert alert-<%= f.type %>"><%= f.message %></div>
+  <% }) %>

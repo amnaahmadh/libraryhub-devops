@@ -1,0 +1,6 @@
+# The image only needs the application source; everything else stays out of the build context.
+*
+!app/
+app/node_modules/
+app/.env
+app/**/*.log

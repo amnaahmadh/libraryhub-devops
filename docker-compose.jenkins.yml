@@ -1,0 +1,73 @@
+# Assignment 2, Part II: deployment brought up by the Jenkins pipeline (see Jenkinsfile).
+#
+# Re-uses docker-compose.yml (Part I) with the changes required by the assignment:
+#   * no Dockerfile / custom image: the official node:22-alpine image runs the code from the
+#     Jenkins workspace, which is attached as a volume (./app -> /app)
+#   * different container names, host ports (web 8081 -> 3000, db 3308 -> 3306), project name
+#     and database volume, so this stack runs next to Part I on the same EC2 instance
+name: libraryhub-ci
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: libraryhub-ci-db
+    restart: unless-stopped
+    command: ["--performance-schema=OFF"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is not set, see .env.example}
+      MYSQL_ROOT_HOST: localhost
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: library_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set, see .env.example}
+      DB_READONLY_USER: evaluator
+      DB_READONLY_PASSWORD: ${DB_READONLY_PASSWORD:?DB_READONLY_PASSWORD is not set, see .env.example}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+      start_interval: 2s
+
+  web:
+    image: node:22-alpine
+    container_name: libraryhub-ci-web
+    restart: unless-stopped
+    working_dir: /app
+    command: ["node", "server.js"]
+    # Run as the owner of the Jenkins workspace (exported by the Jenkinsfile) so the mounted code is readable.
+    user: "${APP_UID:-1000}:${APP_GID:-1000}"
+    volumes:
+      - ./app:/app:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DEPLOY_TARGET: AWS EC2 - Jenkins CI/CD (Part II)
+      BUILD_NUMBER: ${BUILD_NUMBER:-}
+      GIT_COMMIT: ${GIT_COMMIT_SHORT:-}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: library_db
+      DB_USER: library_app
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set, see .env.example}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is not set, see .env.example}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+      start_interval: 2s
+    ports:
+      - "8081:3000"
+
+volumes:
+  mysql-data:

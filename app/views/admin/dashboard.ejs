@@ -1,0 +1,54 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/admin-nav') %>
+<h1>Admin Dashboard</h1>
+
+<section class="stats-grid">
+  <div class="stat"><span class="stat-value"><%= stats.titles %></span><span class="stat-label">Titles</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.copies %></span><span class="stat-label">Total copies</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.members %></span><span class="stat-label">Members</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.active_loans %></span><span class="stat-label">Active loans</span></div>
+  <div class="stat stat-danger"><span class="stat-value"><%= stats.overdue %></span><span class="stat-label">Overdue</span></div>
+  <div class="stat"><span class="stat-value">Rs. <%= Number(stats.fines).toFixed(0) %></span><span class="stat-label">Fines recorded</span></div>
+</section>
+
+<div class="two-col">
+  <div class="card">
+    <h2>Most borrowed</h2>
+    <% if (!popular.length) { %><p class="muted">No loans yet.</p><% } else { %>
+      <ol class="ranked">
+        <% popular.forEach(function (b) { %>
+          <li><a href="/books/<%= b.id %>"><%= b.title %></a> <span class="muted">&middot; <%= b.times_borrowed %> <%= b.times_borrowed === 1 ? 'loan' : 'loans' %></span></li>
+        <% }) %>
+      </ol>
+    <% } %>
+  </div>
+  <div class="card">
+    <h2>Books by category</h2>
+    <% const max = Math.max.apply(null, byCategory.map(function (c) { return c.books; }).concat([1])); %>
+    <% byCategory.forEach(function (c) { %>
+      <div class="bar-row">
+        <span class="bar-label"><%= c.name %></span>
+        <span class="bar"><span class="bar-fill" style="width: <%= Math.round(c.books / max * 100) %>%"></span></span>
+        <span class="bar-value"><%= c.books %></span>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Overdue loans</h2>
+  <% if (!overdue.length) { %><p class="muted">No overdue loans.</p><% } else { %>
+    <table class="table">
+      <thead><tr><th>Book</th><th>Member</th><th>Due</th><th>Days late</th><th></th></tr></thead>
+      <tbody>
+        <% overdue.forEach(function (l) { %>
+          <tr class="row-danger"><td><%= l.title %></td><td><%= l.member %></td><td><%= fmtDate(l.due_date) %></td><td><%= l.days_late %></td>
+            <td><form method="post" action="/loans/<%= l.id %>/return"><input type="hidden" name="from" value="admin"><button class="btn btn-sm">Mark returned</button></form></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

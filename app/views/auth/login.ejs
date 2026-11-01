@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+
+<div class="auth-card card">
+  <h1>Welcome back</h1>
+  <p class="muted">Log in to borrow books and manage your loans.</p>
+  <%- include('../partials/errors') %>
+  <form method="post" action="/login" class="form">
+    <input type="hidden" name="next" value="<%= next %>">
+    <label>Email
+      <input type="email" name="email" value="<%= form.email || '' %>" required autofocus>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button class="btn btn-block">Log in</button>
+  </form>
+  <p class="muted center">No account? <a href="/register">Register here</a></p>
+  <div class="hint">
+    <strong>Demo accounts</strong><br>
+    Admin: <code>admin@library.com</code> / <code>Admin@123</code><br>
+    Member: <code>member@library.com</code> / <code>Member@123</code>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

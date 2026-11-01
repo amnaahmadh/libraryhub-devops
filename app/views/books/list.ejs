@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+
+<div class="page-head">
+  <h1>Catalogue <span class="muted small">(<%= pagination.total %> titles)</span></h1>
+  <% if (currentUser && currentUser.role === 'admin') { %>
+    <a class="btn" href="/books/new">+ Add book</a>
+  <% } %>
+</div>
+
+<form method="get" action="/books" class="filters card">
+  <input type="search" name="q" value="<%= filters.q %>" placeholder="Title, author or ISBN">
+  <select name="category">
+    <option value="">All categories</option>
+    <% categories.forEach(function (c) { %>
+      <option value="<%= c.id %>" <%= filters.category === c.id ? 'selected' : '' %>><%= c.name %></option>
+    <% }) %>
+  </select>
+  <label class="checkbox"><input type="checkbox" name="available" value="1" <%= filters.available ? 'checked' : '' %>> Available only</label>
+  <button class="btn">Filter</button>
+  <a href="/books" class="btn btn-ghost">Reset</a>
+</form>
+
+<% if (!books.length) { %>
+  <div class="empty-state"><p>No books match your search.</p></div>
+<% } else { %>
+  <div class="card-grid">
+    <% books.forEach(function (b) { %>
+      <a class="card book-card" href="/books/<%= b.id %>">
+        <span class="tag"><%= b.category || 'Uncategorised' %></span>
+        <h3><%= b.title %></h3>
+        <p class="muted"><%= b.author %><%= b.published_year ? ' · ' + b.published_year : '' %></p>
+        <span class="availability <%= b.available_copies > 0 ? 'ok' : 'none' %>">
+          <%= b.available_copies %> / <%= b.total_copies %> available
+        </span>
+      </a>
+    <% }) %>
+  </div>
+
+  <% if (pagination.pages > 1) {
+       const qs = (p) => '?' + new URLSearchParams({ q: filters.q, category: filters.category || '', available: filters.available ? '1' : '', page: p }).toString(); %>
+    <nav class="pagination">
+      <% for (let p = 1; p <= pagination.pages; p++) { %>
+        <a href="<%= qs(p) %>" class="<%= p === pagination.page ? 'current' : '' %>"><%= p %></a>
+      <% } %>
+    </nav>
+  <% } %>
+<% } %>
+
+<%- include('../partials/footer') %>

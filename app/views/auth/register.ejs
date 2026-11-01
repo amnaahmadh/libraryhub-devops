@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+
+<div class="auth-card card">
+  <h1>Create an account</h1>
+  <p class="muted">Become a member to borrow up to 3 books at a time.</p>
+  <%- include('../partials/errors') %>
+  <form method="post" action="/register" class="form">
+    <label>Full name
+      <input type="text" name="name" value="<%= form.name || '' %>" minlength="2" maxlength="100" required autofocus>
+    </label>
+    <label>Email
+      <input type="email" name="email" value="<%= form.email || '' %>" required>
+    </label>
+    <label>Password <span class="muted">(min 8 characters, letters and numbers)</span>
+      <input type="password" name="password" minlength="8" required>
+    </label>
+    <label>Confirm password
+      <input type="password" name="confirm" minlength="8" required>
+    </label>
+    <button class="btn btn-block">Register</button>
+  </form>
+  <p class="muted center">Already a member? <a href="/login">Log in</a></p>
+</div>
+
+<%- include('../partials/footer') %>

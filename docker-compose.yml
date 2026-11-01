@@ -1,0 +1,58 @@
+# Assignment 2, Part I: containerised deployment of LibraryHub on AWS EC2.
+#
+#   web : LibraryHub image built from ./Dockerfile and pulled from Docker Hub
+#   db  : official MySQL 8.4 image, data persisted in the named volume "mysql-data"
+#
+# Host ports differ from container ports:  web 80 -> 3000,  db 3307 -> 3306
+# Secrets come from ./.env (copy .env.example).  Start with:  docker compose up -d
+name: libraryhub
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: libraryhub-db
+    restart: unless-stopped
+    command: ["--performance-schema=OFF"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is not set, see .env.example}
+      MYSQL_ROOT_HOST: localhost
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: library_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set, see .env.example}
+      DB_READONLY_USER: evaluator
+      DB_READONLY_PASSWORD: ${DB_READONLY_PASSWORD:?DB_READONLY_PASSWORD is not set, see .env.example}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3307:3306"
+    healthcheck:
+      # Uses TCP on purpose: the temporary server that runs the first-start initialisation has
+      # networking disabled, so this only succeeds once the real server is accepting connections.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+      start_interval: 2s
+
+  web:
+    image: your-dockerhub-username/libraryhub:1.0
+    container_name: libraryhub-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DEPLOY_TARGET: AWS EC2 - Docker Compose (Part I)
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: library_db
+      DB_USER: library_app
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set, see .env.example}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is not set, see .env.example}
+    ports:
+      - "80:3000"
+
+volumes:
+  mysql-data:

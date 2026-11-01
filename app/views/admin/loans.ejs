@@ -1,0 +1,43 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/admin-nav') %>
+<div class="page-head">
+  <h1>All Loans</h1>
+  <nav class="pills">
+    <% ['all', 'active', 'overdue', 'returned'].forEach(function (s) { %>
+      <a href="/admin/loans?status=<%= s %>" class="<%= status === s ? 'active' : '' %>"><%= s.charAt(0).toUpperCase() + s.slice(1) %></a>
+    <% }) %>
+  </nav>
+</div>
+
+<div class="card">
+  <% if (!loans.length) { %><p class="muted">No loans found.</p><% } else { %>
+    <table class="table">
+      <thead><tr><th>#</th><th>Book</th><th>Member</th><th>Issued</th><th>Due</th><th>Status</th><th>Fine</th><th></th></tr></thead>
+      <tbody>
+        <% loans.forEach(function (l) { %>
+          <tr class="<%= l.overdue ? 'row-danger' : '' %>">
+            <td><%= l.id %></td>
+            <td><a href="/books/<%= l.book_id %>"><%= l.title %></a></td>
+            <td><%= l.member %><br><span class="muted small"><%= l.email %></span></td>
+            <td><%= fmtDate(l.issued_at) %></td>
+            <td><%= fmtDate(l.due_date) %></td>
+            <td>
+              <% if (l.status === 'returned') { %><span class="badge">Returned</span>
+              <% } else if (l.overdue) { %><span class="badge badge-danger">Overdue</span>
+              <% } else { %><span class="badge badge-ok">On loan</span><% } %>
+            </td>
+            <td>Rs. <%= Number(l.status === 'returned' ? l.fine_amount : l.accrued_fine).toFixed(0) %></td>
+            <td>
+              <% if (l.status === 'issued') { %>
+                <form method="post" action="/loans/<%= l.id %>/return"><input type="hidden" name="from" value="admin"><button class="btn btn-sm">Mark returned</button></form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

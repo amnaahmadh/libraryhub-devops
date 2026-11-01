@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<h1>My Profile</h1>
+
+<section class="stats-grid">
+  <div class="stat"><span class="stat-value"><%= stats.total %></span><span class="stat-label">Books borrowed</span></div>
+  <div class="stat"><span class="stat-value"><%= stats.active %></span><span class="stat-label">Currently on loan</span></div>
+  <div class="stat"><span class="stat-value">Rs. <%= Number(stats.fines).toFixed(0) %></span><span class="stat-label">Fines recorded</span></div>
+</section>
+
+<div class="two-col">
+  <div class="card">
+    <h2>Account details</h2>
+    <form method="post" action="/profile" class="form">
+      <label>Full name
+        <input type="text" name="name" value="<%= currentUser.name %>" minlength="2" maxlength="100" required>
+      </label>
+      <label>Email
+        <input type="email" value="<%= currentUser.email %>" disabled>
+      </label>
+      <label>Role
+        <input type="text" value="<%= currentUser.role %>" disabled>
+      </label>
+      <button class="btn">Save changes</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Change password</h2>
+    <form method="post" action="/profile/password" class="form">
+      <label>Current password <input type="password" name="current" required></label>
+      <label>New password <input type="password" name="password" minlength="8" required></label>
+      <label>Confirm new password <input type="password" name="confirm" minlength="8" required></label>
+      <button class="btn">Update password</button>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

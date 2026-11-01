@@ -1,0 +1,7 @@
+<nav class="subnav">
+  <a href="/admin" class="<%= currentPath === '/admin' || currentPath === '/admin/' ? 'active' : '' %>">Dashboard</a>
+  <a href="/admin/loans" class="<%= currentPath === '/admin/loans' ? 'active' : '' %>">Loans</a>
+  <a href="/admin/users" class="<%= currentPath === '/admin/users' ? 'active' : '' %>">Users</a>
+  <a href="/categories" class="<%= currentPath.startsWith('/categories') ? 'active' : '' %>">Categories</a>
+  <a href="/books/new">+ Add book</a>
+</nav>

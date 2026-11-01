@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+
+<%- include('../partials/admin-nav') %>
+<h1>Manage Users</h1>
+
+<div class="card">
+  <table class="table">
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Active loans</th><th>Joined</th><th>Actions</th></tr></thead>
+    <tbody>
+      <% users.forEach(function (u) { const self = u.id === currentUser.id; %>
+        <tr>
+          <td><%= u.name %><%= self ? ' (you)' : '' %></td>
+          <td><%= u.email %></td>
+          <td><span class="badge <%= u.role === 'admin' ? 'badge-deploy' : '' %>"><%= u.role %></span></td>
+          <td><span class="badge <%= u.is_active ? 'badge-ok' : 'badge-danger' %>"><%= u.is_active ? 'Active' : 'Deactivated' %></span></td>
+          <td><%= u.active_loans %></td>
+          <td><%= fmtDate(u.created_at) %></td>
+          <td class="actions">
+            <% if (!self) { %>
+              <form method="post" action="/admin/users/<%= u.id %>/role">
+                <input type="hidden" name="role" value="<%= u.role === 'admin' ? 'member' : 'admin' %>">
+                <button class="btn btn-sm btn-ghost"><%= u.role === 'admin' ? 'Make member' : 'Make admin' %></button>
+              </form>
+              <form method="post" action="/admin/users/<%= u.id %>/toggle">
+                <button class="btn btn-sm <%= u.is_active ? 'btn-danger' : '' %>"><%= u.is_active ? 'Deactivate' : 'Activate' %></button>
+              </form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/footer') %>

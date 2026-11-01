@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<h1>About &amp; Deployment</h1>
+<p class="lead">LibraryHub is a three-tier web application (Node.js/Express &rarr; MySQL) built for the DevOps for Cloud Computing course. It is packaged as a Docker image, deployed on AWS EC2 with Docker Compose, and rebuilt automatically by a Jenkins CI/CD pipeline on every GitHub push.</p>
+
+<div class="card">
+  <h2>Runtime information</h2>
+  <table class="table kv">
+    <tr><th>Deployment target</th><td><span class="badge badge-deploy"><%= info.deployment %></span></td></tr>
+    <tr><th>Application version</th><td><code>v<%= info.version %></code></td></tr>
+    <tr><th>Jenkins build</th><td><%= info.build.number ? `#${info.build.number}` : '-' %><% if (info.build.commit) { %> &middot; commit <code><%= info.build.commit %></code><% } %></td></tr>
+    <tr><th>Running in a container</th><td><%= info.container ? 'Yes (Docker)' : 'No' %></td></tr>
+    <tr><th>Server hostname</th><td><code><%= info.hostname %></code><% if (info.container) { %> <span class="muted">(container ID)</span><% } %></td></tr>
+    <tr><th>Operating system</th><td><%= info.platform %></td></tr>
+    <tr><th>Node.js version</th><td><%= info.node %></td></tr>
+    <tr><th>Process uptime</th><td><%= info.uptimeSeconds %> s</td></tr>
+    <tr><th>Database host</th><td><code><%= info.database.host %></code></td></tr>
+    <tr><th>Database name</th><td><code><%= info.database.name %></code></td></tr>
+    <tr><th>Database status</th>
+      <td><span class="badge <%= info.database.status === 'connected' ? 'badge-ok' : 'badge-danger' %>"><%= info.database.status %></span>
+        <% if (info.database.version) { %> MySQL <%= info.database.version %><% } %>
+        <% if (info.database.error) { %> (<%= info.database.error %>)<% } %>
+      </td></tr>
+  </table>
+  <p class="muted">Machine-readable health check: <a href="/health"><code>/health</code></a></p>
+</div>
+
+<div class="card">
+  <h2>Modules</h2>
+  <ul>
+    <li><strong>User &amp; Authentication</strong> &ndash; registration, login, profile, password change, roles.</li>
+    <li><strong>Catalogue</strong> &ndash; books and categories with search, filters and pagination.</li>
+    <li><strong>Circulation</strong> &ndash; borrowing, returns, due dates, loan limits and overdue fines.</li>
+    <li><strong>Administration</strong> &ndash; dashboard analytics, loan monitoring and user management.</li>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>
